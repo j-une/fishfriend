@@ -10,6 +10,15 @@ const sensorsSchema = mongoose.Schema(
       type: Number,
       required: true,
     },
+    food_level: {
+      type: Number,
+      required: true,
+    },
+    status: {
+      type: String,
+      enum: ["normal", "waste", "clean"],
+      required: true,
+    },
   },
   {
     timestamps: true,
