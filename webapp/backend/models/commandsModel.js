@@ -6,13 +6,14 @@ const commandsSchema = mongoose.Schema(
       type: Number,
       required: true,
     },
-    food: {
+    feeder: {
       type: Number,
+      enum: [0, 1, 2, 3], // number of rotations, 0 is off
       required: true,
     },
     water_change: {
       type: String,
-      enum: ["start", "normal"],
+      enum: ["start", "off"],
       required: true,
     },
   },

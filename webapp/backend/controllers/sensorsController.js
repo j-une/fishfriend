@@ -4,7 +4,7 @@ const Sensor_Data = require("../models/sensorsModel");
 
 const getSensorData = asyncHandler(async (req, res) => {
   const sensor_data = await Sensor_Data.find().limit(1).sort({ $natural: -1 });
-  res.status(200).json(sensor_data);
+  res.status(200).json(sensor_data[0]);
 });
 
 const sendSensorData = asyncHandler(async (req, res) => {
