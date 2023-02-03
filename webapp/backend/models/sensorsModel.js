@@ -14,6 +14,11 @@ const sensorsSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    feeder: {
+      type: String,
+      enum: ["on", "off"],
+      required: true,
+    },
     status: {
       type: String,
       enum: ["normal", "waste", "clean"],
