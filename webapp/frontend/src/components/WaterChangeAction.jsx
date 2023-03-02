@@ -12,11 +12,16 @@ import {
 import LoadingButton from "@mui/lab/LoadingButton";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import CloseIcon from "@mui/icons-material/Close";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function WaterChangeAction(props) {
+  const { waterChangeState } = props.data;
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (waterChangeState === "normal") setLoading(false);
+  }, [waterChangeState]);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -24,6 +29,7 @@ function WaterChangeAction(props) {
 
   const handleClose = () => {
     setOpen(false);
+    setLoading(false);
   };
 
   const handleSubmit = async () => {
@@ -74,7 +80,7 @@ function WaterChangeAction(props) {
         </DialogContent>
 
         <DialogActions sx={{ justifyContent: "center", pb: 3 }}>
-          {/* TODO: tell user when water change is done and reset to off */}
+          {/* TODO: edit loading button to nicer UI telling user water change is in progress/done */}
           <LoadingButton
             loading={loading}
             variant="contained"

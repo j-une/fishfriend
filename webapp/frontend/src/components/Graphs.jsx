@@ -17,10 +17,10 @@ function Graphs(data) {
   return (
     <Card sx={{ mt: 2 }}>
       <CardContent sx={{ display: "flex", p: 3 }}>
-        <Box sx={{ flex: 1 }}>
+        <Box sx={{ flex: 1 }} width="100%">
           <Typography variant="h6">pH Levels</Typography>
-          <Box height={250}>
-            <ResponsiveContainer>
+          <Box height={250} width="100%">
+            <ResponsiveContainer width="99%">
               <LineChart
                 data={sensorData}
                 margin={{
@@ -50,10 +50,10 @@ function Graphs(data) {
             </ResponsiveContainer>
           </Box>
         </Box>
-        <Box sx={{ flex: 1 }}>
+        <Box sx={{ flex: 1 }} width="100%">
           <Typography variant="h6">Temperature</Typography>
-          <Box height={250}>
-            <ResponsiveContainer width="100%" height="100%">
+          <Box height={250} width="100%">
+            <ResponsiveContainer width="99%">
               <LineChart
                 data={sensorData}
                 margin={{

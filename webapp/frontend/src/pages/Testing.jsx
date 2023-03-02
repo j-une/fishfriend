@@ -1,26 +1,26 @@
 import React, { useEffect, useState } from "react";
-import { Button } from "@mui/material";
+// import { Button } from "@mui/material";
 
-const handleClick = async () => {
-  try {
-    const response = await fetch("/api/hello", {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-      },
-    });
+// const handleClick = async () => {
+//   try {
+//     const response = await fetch("/api/hello", {
+//       method: "GET",
+//       headers: {
+//         Accept: "application/json",
+//       },
+//     });
 
-    if (!response.ok) {
-      throw new Error(`Error! status: ${response.status}`);
-    }
+//     if (!response.ok) {
+//       throw new Error(`Error! status: ${response.status}`);
+//     }
 
-    const result = await response.json();
+//     const result = await response.json();
 
-    console.log("result is: ", JSON.stringify(result, null, 4));
-  } catch (err) {
-    console.log("error");
-  }
-};
+//     console.log("result is: ", JSON.stringify(result, null, 4));
+//   } catch (err) {
+//     console.log("error");
+//   }
+// };
 
 function Testing() {
   const [sensorData, setSensorData] = useState();

@@ -7,7 +7,10 @@ import Settings from "./pages/Settings";
 import Sidebar from "./components/Sidebar";
 import Testing from "./pages/Testing";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { GlobalStyles } from "@mui/material";
+import { CssBaseline, GlobalStyles } from "@mui/material";
+import { useEffect, useState } from "react";
+import { resetFeeder, resetWaterChange } from "./utils/reset";
+import { Box } from "@mui/system";
 
 let theme = createTheme({
   palette: {
@@ -24,28 +27,84 @@ let theme = createTheme({
 });
 
 function App() {
+  const [sensorData, setSensorData] = useState();
+  const [commandData, setCommandData] = useState();
+  const [feederState, setFeederState] = useState("off");
+  const [waterChangeState, setWaterChangeState] = useState();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      // Fetch sensor and commands data every 3 seconds, send to all children through props
+      try {
+        const [sensorResponse, commandsResponse] = await Promise.all([
+          fetch("/api/sensors/graph"),
+          fetch("/api/commands"),
+        ]);
+        const [sensorJSON, commandsJSON] = await Promise.all([
+          sensorResponse.json(),
+          commandsResponse.json(),
+        ]);
+
+        // Reset feeder and water change commands when Arduino receives the commands
+        resetFeeder(feederState, sensorJSON[0].feeder);
+        resetWaterChange(waterChangeState, sensorJSON[0].status);
+        setFeederState(sensorJSON[0].feeder);
+        setWaterChangeState(sensorJSON[0].status);
+
+        setSensorData(sensorJSON);
+        setCommandData(commandsJSON);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    const id = setInterval(() => {
+      fetchData();
+    }, 3000);
+
+    fetchData();
+
+    return () => clearInterval(id);
+  }, [feederState, waterChangeState]);
   return (
     <>
-      <Sidebar>
-        <ThemeProvider theme={theme}>
-          <GlobalStyles
-            styles={{
-              body: { backgroundColor: "#F9F9F9" },
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <GlobalStyles
+          styles={{
+            body: { backgroundColor: "#F9F9F9" },
+          }}
+        />
+        <Router>
+          <Sidebar />
+          <Box
+            component="main"
+            sx={{
+              flexGrow: 1,
+              p: 3,
+              marginLeft: "240px",
             }}
-          />
-          <Router>
-            <div className="container">
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/your-tank" element={<YourTank />} />
-                <Route path="/learn" element={<Learn />} />
-                <Route path="/settings" element={<Settings />} />
-                <Route path="/testing" element={<Testing />} />
-              </Routes>
-            </div>
-          </Router>
-        </ThemeProvider>
-      </Sidebar>
+          >
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route
+                path="/your-tank"
+                element={
+                  <YourTank
+                    sensorData={sensorData}
+                    commandData={commandData}
+                    waterChangeState={waterChangeState}
+                  />
+                }
+              />
+              <Route path="/learn" element={<Learn />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/testing" element={<Testing />} />
+            </Routes>
+          </Box>
+        </Router>
+      </ThemeProvider>
+      {/* </Sidebar> */}
     </>
   );
 }

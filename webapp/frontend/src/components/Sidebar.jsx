@@ -1,6 +1,5 @@
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
-import CssBaseline from "@mui/material/CssBaseline";
 import Toolbar from "@mui/material/Toolbar";
 import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
@@ -14,8 +13,6 @@ import RectangleOutlinedIcon from "@mui/icons-material/RectangleOutlined";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import SettingsIcon from "@mui/icons-material/Settings";
 import BuildIcon from "@mui/icons-material/Build";
-
-const drawerWidth = 240;
 
 const items = [
   {
@@ -48,26 +45,23 @@ const items = [
 export default function Sidebar({ children }) {
   return (
     <Box
-      sx={{
-        display: "flex",
-        flexDirection: "row",
-        height: "100%",
-        width: "100%",
-      }}
+      component="nav"
+      sx={{ width: { sm: 240 }, flexShrink: { sm: 0 } }}
+      aria-label="mailbox folders"
     >
-      <CssBaseline />
       <Drawer
+        open
         sx={{
-          width: drawerWidth,
+          display: "block",
           "& .MuiDrawer-paper": {
-            width: drawerWidth,
+            width: 240,
             boxSizing: "border-box",
           },
         }}
         variant="permanent"
       >
         <Toolbar>
-          <img width="200px" src={require("../logo.png")} />
+          <img alt="" width="200px" src={require("../logo.png")} />
         </Toolbar>
         <Divider />
         <List>
@@ -89,16 +83,6 @@ export default function Sidebar({ children }) {
           ))}
         </List>
       </Drawer>
-      <Box
-        component="main"
-        sx={{
-          width: "100%",
-          flex: 1,
-          p: 6,
-        }}
-      >
-        {children}
-      </Box>
     </Box>
   );
 }

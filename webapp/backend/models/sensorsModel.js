@@ -21,7 +21,7 @@ const sensorsSchema = mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["normal", "waste", "clean"],
+      enum: ["normal", "waste"],
       required: true,
     },
   },

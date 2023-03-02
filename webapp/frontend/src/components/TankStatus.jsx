@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, CardContent, Box, Typography, Button } from "@mui/material";
+import { Card, CardContent, Box, Typography } from "@mui/material";
 
 function TankStatus(props) {
   const sensorData = props.data;

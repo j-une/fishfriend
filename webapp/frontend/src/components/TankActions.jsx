@@ -1,19 +1,10 @@
-import React, { useState } from "react";
 import {
   Card,
   CardContent,
   Box,
   Typography,
-  Button,
   List,
-  ListItemButton,
-  ListItemText,
-  ListItem,
   Divider,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
 } from "@mui/material";
 import WaterChangeAction from "./WaterChangeAction";
 import TemperatureAction from "./TemperatureAction";
