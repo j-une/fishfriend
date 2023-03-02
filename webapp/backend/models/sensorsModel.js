@@ -3,15 +3,15 @@ const mongoose = require("mongoose");
 const sensorsSchema = mongoose.Schema(
   {
     ph: {
-      type: String,
+      type: Number,
       required: true,
     },
     temperature: {
-      type: String,
+      type: Number,
       required: true,
     },
     food_level: {
-      type: String,
+      type: Number,
       required: true,
     },
     feeder: {

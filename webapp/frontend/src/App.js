@@ -7,6 +7,7 @@ import Settings from "./pages/Settings";
 import Sidebar from "./components/Sidebar";
 import Testing from "./pages/Testing";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { GlobalStyles } from "@mui/material";
 
 let theme = createTheme({
   palette: {
@@ -16,6 +17,9 @@ let theme = createTheme({
     secondary: {
       main: "#c951bf",
     },
+    background: {
+      default: "#222222",
+    },
   },
 });
 
@@ -24,6 +28,11 @@ function App() {
     <>
       <Sidebar>
         <ThemeProvider theme={theme}>
+          <GlobalStyles
+            styles={{
+              body: { backgroundColor: "#F9F9F9" },
+            }}
+          />
           <Router>
             <div className="container">
               <Routes>

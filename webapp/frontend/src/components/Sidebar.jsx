@@ -1,4 +1,3 @@
-import * as React from "react";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -18,85 +17,85 @@ import BuildIcon from "@mui/icons-material/Build";
 
 const drawerWidth = 240;
 
+const items = [
+  {
+    value: "Home",
+    href: "/",
+    icon: <HomeIcon />,
+  },
+  {
+    value: "Your Tank",
+    href: "/your-tank",
+    icon: <RectangleOutlinedIcon />,
+  },
+  {
+    value: "Learn",
+    href: "/learn",
+    icon: <MenuBookIcon />,
+  },
+  {
+    value: "Settings",
+    href: "/settings",
+    icon: <SettingsIcon />,
+  },
+  {
+    value: "Testing",
+    href: "/testing",
+    icon: <BuildIcon />,
+  },
+];
+
 export default function Sidebar({ children }) {
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "row",
+        height: "100%",
+        width: "100%",
+      }}
+    >
       <CssBaseline />
       <Drawer
         sx={{
           width: drawerWidth,
-          flexShrink: 0,
           "& .MuiDrawer-paper": {
             width: drawerWidth,
             boxSizing: "border-box",
           },
         }}
         variant="permanent"
-        anchor="left"
       >
-        <Toolbar />
+        <Toolbar>
+          <img width="200px" src={require("../logo.png")} />
+        </Toolbar>
         <Divider />
         <List>
-          <ListItem key="Home" disablePadding component={Link} href="/">
-            <ListItemButton>
-              <ListItemIcon>
-                <HomeIcon />
-              </ListItemIcon>
-              <ListItemText primary="Home" />
-            </ListItemButton>
-          </ListItem>
-          <ListItem
-            key="Your Tank"
-            disablePadding
-            component={Link}
-            href="/your-tank"
-          >
-            <ListItemButton>
-              <ListItemIcon>
-                <RectangleOutlinedIcon />
-              </ListItemIcon>
-              <ListItemText primary="Your Tank" />
-            </ListItemButton>
-          </ListItem>
-          <ListItem key="Learn" disablePadding component={Link} href="/learn">
-            <ListItemButton>
-              <ListItemIcon>
-                <MenuBookIcon />
-              </ListItemIcon>
-              <ListItemText primary="Learn" />
-            </ListItemButton>
-          </ListItem>
-          <ListItem
-            key="Settings"
-            disablePadding
-            component={Link}
-            href="/settings"
-          >
-            <ListItemButton>
-              <ListItemIcon>
-                <SettingsIcon />
-              </ListItemIcon>
-              <ListItemText primary="Settings" />
-            </ListItemButton>
-          </ListItem>
-          <ListItem
-            key="Testing"
-            disablePadding
-            component={Link}
-            href="/testing"
-          >
-            <ListItemButton>
-              <ListItemIcon>
-                <BuildIcon />
-              </ListItemIcon>
-              <ListItemText primary="Testing" />
-            </ListItemButton>
-          </ListItem>
+          {items.map((item) => (
+            <ListItem
+              key={item.value}
+              disablePadding
+              component={Link}
+              href={item.href}
+            >
+              <ListItemButton
+                sx={{ color: "#0000008a" }}
+                selected={item.href === window.location.pathname}
+              >
+                <ListItemIcon>{item.icon}</ListItemIcon>
+                <ListItemText primary={item.value} />
+              </ListItemButton>
+            </ListItem>
+          ))}
         </List>
       </Drawer>
       <Box
         component="main"
-        sx={{ flexGrow: 1, bgcolor: "background.default", p: 3 }}
+        sx={{
+          width: "100%",
+          flex: 1,
+          p: 6,
+        }}
       >
         {children}
       </Box>

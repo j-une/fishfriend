@@ -1,5 +1,14 @@
+import { Typography } from "@mui/material";
+
+// TODO: entire page
 function Settings() {
-  return <div>settings</div>;
+  return (
+    <>
+      <Typography variant="h5" gutterBottom>
+        Settings
+      </Typography>
+    </>
+  );
 }
 
 export default Settings;

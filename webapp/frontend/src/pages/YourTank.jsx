@@ -1,15 +1,30 @@
 import React, { useEffect, useState } from "react";
+import { Box } from "@mui/material";
 import Typography from "@mui/material/Typography";
+import Graphs from "../components/Graphs";
+import TankStatus from "../components/TankStatus";
+import YourFish from "../components/YourFish";
+import TankActions from "../components/TankActions";
 
 function YourTank() {
   const [sensorData, setSensorData] = useState();
+  const [commandData, setCommandData] = useState();
 
   useEffect(() => {
     const fetchData = async () => {
+      // Fetch sensor and commands data every 3 seconds, send to all children through props
       try {
-        const res = await fetch("/api/sensors");
-        const json = await res.json();
-        setSensorData(json);
+        const [sensorResponse, commandsResponse] = await Promise.all([
+          fetch("/api/sensors/graph"),
+          fetch("/api/commands"),
+        ]);
+        const [sensorJSON, commandsJSON] = await Promise.all([
+          sensorResponse.json(),
+          commandsResponse.json(),
+        ]);
+
+        setSensorData(sensorJSON);
+        setCommandData(commandsJSON);
       } catch (error) {
         console.log(error);
       }
@@ -23,41 +38,20 @@ function YourTank() {
 
     return () => clearInterval(id);
   }, []);
+
   return (
     <>
-      <Typography variant="h3" gutterBottom>
-        Your Tank
-      </Typography>
-      {sensorData && (
+      {sensorData && commandData && (
         <>
-          <p>pH: {sensorData.ph}</p>
-          <p>temperature: {sensorData.temperature}</p>
-          <p>food level: {sensorData.food_level}</p>
-          <br />
-          <h5>Send commands:</h5>
-          <iframe
-            name="dummyframe"
-            title="dummyframe"
-            id="dummyframe"
-            style={{ display: "none" }}
-          ></iframe>
-          <form
-            action="http://localhost:2000/api/commands"
-            method="POST"
-            target="dummyframe"
-          >
-            <label htmlFor="temperature">temperature: </label>
-            <input id="temperature" type="text" name="temperature" />
-            <br />
-            <label htmlFor="feeder">feeder: </label>
-            <input id="feeder" type="text" name="feeder" />
-            <br />
-            <label htmlFor="water_change">water change: </label>
-            <input id="water_change" type="text" name="water_change" />
-            <br />
-            <button>send</button>
-          </form>
-          <br />{" "}
+          <Typography variant="h5" gutterBottom>
+            Your Tank
+          </Typography>
+          <TankStatus data={sensorData[0]} />
+          <Box sx={{ display: "flex", columnGap: 2 }}>
+            <TankActions data={commandData} />
+            <YourFish />
+          </Box>
+          <Graphs data={sensorData} />
         </>
       )}
     </>

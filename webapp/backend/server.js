@@ -1,6 +1,8 @@
 const express = require("express");
 const dotenv = require("dotenv").config();
 const connectDB = require("./config/db");
+const scheduledFeeder = require("./scheduled/feeder");
+
 const port = process.env.PORT || 2000;
 
 connectDB();
@@ -12,6 +14,9 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use("/api/sensors", require("./routes/sensorsRoutes"));
 app.use("/api/commands", require("./routes/commandsRoutes"));
+app.use("/api/feeder", require("./routes/feederRoutes"));
+
+scheduledFeeder.initializeFeeder();
 
 // BELOW FOR TESTING
 // let val;
