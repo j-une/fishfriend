@@ -1,15 +1,3 @@
-/*
-  Simple WebSocket client for ArduinoHttpClient library
-  Connects to the WebSocket server, and sends a hello
-  message every 5 seconds
-
-  created 28 Jun 2016
-  by Sandeep Mistry
-  modified 22 Jan 2019
-  by Tom Igoe
-
-  this example is in the public domain
-*/
 #include <ArduinoHttpClient.h>
 #include <Arduino.h>
 #include <WifiNINA.h>
@@ -18,8 +6,8 @@
 #include <ArduinoJson.h>
 #include "arduino_secrets.h"
 #include "SPI.h"
-#include 
-
+#include <Drive.h>
+#include <Servo.h>
 
 #define HEATER_CONTROL 0
 #define VALVE_CONTROL 1
@@ -29,11 +17,20 @@
 #define TEMP_DATA_BUS_2 7
 #define FEED_CONTROL_P 12
 #define FEED_CONTROL_N 13
+#define pH_SENSOR_PIN A1
+
+const int IN1 = FEED_CONTROL_P;
+const int IN2 = FEED_CONTROL_N;
+const int IN3 = PUMP_CONTROL_P;
+const int IN4 = PUMP_CONTROL_N;
+
+unsigned long int avgValue; 
+int buf[10],temp;
 
 char ssid[] = SECRET_SSID;        
 char pass[] = SECRET_PASS;
 
-int keyIndex = 0;            // your network key Index number (needed only for WEP)
+int keyIndex = 0;
 
 int status = WL_IDLE_STATUS;
 //Your Domain name with URL path or IP address with path
@@ -41,11 +38,9 @@ char server[] = "10.31.27.83";
 int port = 80;
 int desired_temp = 0;
 
-DynamicJsonBuffer jsonBuffer(200);
-
-
 char json[] = "{\"LED\": 0}"; 
 
+DynamicJsonBuffer jsonBuffer(200);
 
 // Setup a oneWire instance to communicate with any OneWire devices
 OneWire oneWire(ONE_WIRE_BUS);
@@ -53,13 +48,44 @@ OneWire oneWire(ONE_WIRE_BUS);
 // Pass our oneWire reference to Dallas Temperature sensor 
 DallasTemperature sensors(&oneWire);
 
-
-// the following variables are unsigned longs because the time, measured in
-// milliseconds, will quickly become a bigger number than can be stored in an int.
-
 WiFiClient client;
 HttpClient httpClient = HttpClient(client, server, 2000);
+
+Servo myservo;
+
+Drive drive(IN1, IN2, IN3, IN4);
+
 int count = 0;
+int pos = 0;
+
+float phMeasurement() {
+  for(int i=0;i<10;i++)       //Get 10 sample value from the sensor for smooth the value
+  { 
+    buf[i]=analogRead(pH_SENSOR_PIN);
+    delay(5);
+  }
+  for(int i=0;i<9;i++)        //sort the analog from small to large
+  {
+    for(int j=i+1;j<10;j++)
+    {
+      if(buf[i]>buf[j])
+      {
+        temp=buf[i];
+        buf[i]=buf[j];
+        buf[j]=temp;
+      }
+    }
+  }
+  avgValue=0;
+  for(int i=2;i<8;i++)                      //take the average value of 6 center sample
+    avgValue+=buf[i];
+  float phValue=(float)avgValue*5.0/1024/6; //convert the analog into millivolt
+  phValue=3.5*phValue;     
+
+  return float(phValue);
+
+}
+
 
 void printWifiStatus() {
 
@@ -94,15 +120,21 @@ void setup() {
 
   Serial.begin(9600);
   sensors.begin();
+
+  /* Initialize HEATER_CONTROL*/
+  /* Initialize Motor Driver (Pump and Feeder Control)*/
+  /* Initialize Temperature Sensor*/
+  /* Initialize pH Sensor*/
+
   pinMode(HEATER_CONTROL, OUTPUT);
+  pinMode(FEED_CONTROL_N,OUTPUT);
+
+  myservo.attach(VALVE_CONTROL);
 
   // check for the WiFi module:
-
   if (WiFi.status() == WL_NO_MODULE) {
 
     Serial.println("Communication with WiFi module failed!");
-
-    // don't continue
 
     while (true);
 
@@ -137,99 +169,57 @@ void setup() {
   Serial.println("Connected to wifi");
 
   printWifiStatus();
-
-  // Call sensors.requestTemperatures() to issue a global temperature and Requests to all devices on the bus
-  
-
-    // read the status code and body of the response
-    // int statusCode = httpClient.responseStatusCode();
-    // String response = httpClient.responseBody();
-
-
-    // client.println("POST /api/world HTTP/1.0"); 
-    // client.println("Host: 10.31.27.83");     
-    // client.println("Connection: close");
-    // client.println("Content-Length: " + postData.length());
-    // client.println("Content-Type: application/x-www-form-urlencoded");
-    // client.println(postData);
-
-    // client.println("POST /api/world HTTP/1.1"); 
-    // client.println("Host: 10.31.27.83");     
-    // // client.println("Accept: */*");
-    // client.println("Content-Type: application/x-www-form-urlencoded");
-    // // client.println("Connection: close");
-    // client.println("Content-Length: " + String(postData.length()));
-    // // client.println(String(postData.length()));
-    // // client.println();
-    // client.println(postData);
-    // // // client.println("Content-Type: application/x-www-form-urlencoded");
-    // // client.println("");
 }
 
 
 
 
-void loop() {
-
-  // if there are incoming bytes available
-
-  // // from the server, read them and print them:
-
-  // while (client.available()) {
-
-  //   char c = client.read();
-
-  //   Serial.write(c);
-
-  // }
-
-   
+void loop() {   
   
   // Serial.print("Celsius temperature: ");
   // // Why "byIndex"? You can have more than one IC on the same bus. 0 refers to the first IC on the wire
   // Serial.print(sensors.getTempCByIndex(0)); 
   // Serial.print(" - Fahrenheit temperature: ");
   // Serial.println(sensors.getTempFByIndex(0));
-  delay(100);
-  Serial.println("Did not fail");
-  
+
   while(client.connect(server, 2000)) {
-    count++;
-    Serial.println(count);
+    // Get temp sensor data
     sensors.requestTemperatures();
+
     Serial.println("making POST request");
     String contentType = "application/x-www-form-urlencoded";
-    // String postData = "name=Alice&age=12";
-    //String postData = "temperature=" + String(sensors.getTempCByIndex(0))+  "pH=" + String(sensors.getTempCByIndex(0)) "food_level=" + String(sensors.getTempCByIndex(0)) + "status=" + String(sensors.getTempCByIndex(0));
-    //String postData = "temperature=1&ph=3&food_level=5&status=normal";
+
+    // Store sensor data in variables
     String tempData = String(sensors.getTempCByIndex(0));
-    String postData = "temperature=" + tempData + "&ph=5&food_level=5&status=normal&feeder=off";
-    Serial.println("pre-post");
+    String pHval = String(phMeasurement());
+
+    // Make POST request with data we want to send
+    String postData = "temperature=" + tempData + "&ph=" + pHval + "&food_level=5&status=normal&feeder=off";
     httpClient.post("/api/sensors", contentType, postData);
     int statusCode = httpClient.responseStatusCode();
     String response = httpClient.responseBody();
-    // Serial.print("Status code: ");
-    // Serial.println(statusCode);
-    // Serial.print("Response: ");
-    // Serial.println(response);
-    Serial.println("pre-get");
+
+    // Make a GET request
     httpClient.get("/api/commands");
+    // Check if GET request suceeded
     int statusCode_get = httpClient.responseStatusCode();
     String response_get = httpClient.responseBody();
+    // Parse GET request
     JsonObject& root = jsonBuffer.parseObject(response_get);
-    // Serial.print("Status code: ");
-    // Serial.println(statusCode_get);
-    // Serial.print("Response: ");
-    // Serial.println(response_get);
+
+    // Check to see if GET request was parsed
     if(!root.success()) {
       Serial.println("parseObject() failed");
-    }   
-    const char* food = root["feeder"];
+    }  
+
+    // Store GET request data into variables 
+    int food = root["feeder"];
     int temp_des = root["temperature"];
     const char* water = root["water_change"];
+
+    // Keep heater within operating range
     if (sensors.getTempCByIndex(0) < temp_des){
       digitalWrite(HEATER_CONTROL, HIGH);
-      Serial.println("BITCH");
       delay(10);
     }
     else
@@ -237,162 +227,15 @@ void loop() {
       digitalWrite(HEATER_CONTROL, LOW);
       delay(10);
     }
+
     Serial.println(food);
     Serial.println(water);
     Serial.print("Temp: ");
     Serial.println(String(temp_des));
+
+    // Clear jsonBuffer variable to prevent disconnection from client
     jsonBuffer.clear();
-    
 
-    // if (strcmp(LED, "off") == 0) {
-    //   digitalWrite(led, LOW); 
-    //   Serial.println("BITCH ITS OFF");
-    // }
-    // else if (strcmp(LED, "on") == 0) {
-    //   digitalWrite(led, HIGH);
-    //   Serial.println("BITCH ITS ON"); 
-    // }
-
-    // Heater Shit
-
-
-  }
-
-
-  // if (currentLine.endsWith("GET /H")) {
-  //         digitalWrite(led, HIGH);               // GET /H turns the LED on
-  //       }
-  // if (currentLine.endsWith("GET /L")) {
-  //         digitalWrite(led, LOW);                // GET /L turns the LED off
-      //}
-  
-  // if the server's disconnected, stop the client:
-
-  // if (!client.connected()) {
-
-  //   Serial.println();
-
-  //   Serial.println("disconnecting from server.");
-
-  //   client.stop();
-
-  //   // do nothing forevermore:
-
-  //   while (true);
-
-  // }
-}
-
-
-
-/* THIS IS FOR GET REQUEST
-
-void setup() {
-
-  //Initialize serial and wait for port to open:
-
-  Serial.begin(9600);
-
-  while (!Serial) {
-
-    ; // wait for serial port to connect. Needed for native USB port only
-
-  }
-
-  // check for the WiFi module:
-
-  if (WiFi.status() == WL_NO_MODULE) {
-
-    Serial.println("Communication with WiFi module failed!");
-
-    // don't continue
-
-    while (true);
-
-  }
-
-  String fv = WiFi.firmwareVersion();
-
-  if (fv < WIFI_FIRMWARE_LATEST_VERSION) {
-
-    Serial.println("Please upgrade the firmware");
-
-  }
-
-  // attempt to connect to Wifi network:
-
-  while (status != WL_CONNECTED) {
-
-    Serial.print("Attempting to connect to SSID: ");
-
-    Serial.println(ssid);
-
-    // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
-
-    status = WiFi.begin(ssid, pass);
-
-    // wait 10 seconds for connection:
-
-    delay(10000);
-
-  }
-
-  Serial.println("Connected to wifi");
-
-  printWifiStatus();
-
-  Serial.println("\nStarting connection to server...");
-
-  // if you get a connection, report back via serial:
-
-  if (client.connect(server, 2000)) {
-
-    Serial.println("connected to server");
-
-    // Make a HTTP request:
-    client.println("GET /api/hello");
-
-    client.println("Host: 10.31.27.83");
-
-    client.println("Connection: close");
-
-    client.println();
-
-
-  }
-
-}
-
-
-void loop() {
-
-  // if there are incoming bytes available
-
-  // from the server, read them and print them:
-
-  while (client.available()) {
-
-    char c = client.read();
-
-    Serial.write(c);
-
-  }
-
-  // if the server's disconnected, stop the client:
-
-  if (!client.connected()) {
-
-    Serial.println();
-
-    Serial.println("disconnecting from server.");
-
-    client.stop();
-
-    // do nothing forevermore:
-
-    while (true);
 
   }
 }
-
-*/
