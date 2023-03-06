@@ -86,6 +86,39 @@ float phMeasurement() {
 
 }
 
+void feedFish(int foodQuantity) {
+  for(int i = 0; i < foodQuantity; i++){
+    analogWrite(IN1, 100);
+    analogWrite(IN2, LOW);
+    delay(100);
+  }
+  analogWrite(IN1, LOW);
+}
+
+void waterChange(){
+  //Turn pump off
+  analogWrite(IN3, LOW);
+  
+  //Turn valve servo to waste output
+  for (pos = 0; pos <= 180; pos += 1) {
+    myservo.write(pos);          
+    delay(50);                       
+  }
+
+  //Turn pump on to pump waste water
+  analogWrite(IN3, 500);
+  delay(50000); //Enough time to clear the tank
+
+  //Turn pump off
+  analogWrite(IN3, LOW);
+
+  //Turn valve servo to normal output
+  for (pos = 180; pos >= 0; pos -= 1) { 
+    myservo.write(pos);              
+    delay(50);
+  }
+}
+
 
 void printWifiStatus() {
 
@@ -113,6 +146,7 @@ void printWifiStatus() {
 
   Serial.println(" dBm");
 }
+
 
 void setup() {
 
@@ -175,12 +209,6 @@ void setup() {
 
 
 void loop() {   
-  
-  // Serial.print("Celsius temperature: ");
-  // // Why "byIndex"? You can have more than one IC on the same bus. 0 refers to the first IC on the wire
-  // Serial.print(sensors.getTempCByIndex(0)); 
-  // Serial.print(" - Fahrenheit temperature: ");
-  // Serial.println(sensors.getTempFByIndex(0));
 
   while(client.connect(server, 2000)) {
     // Get temp sensor data
@@ -215,7 +243,8 @@ void loop() {
     // Store GET request data into variables 
     int food = root["feeder"];
     int temp_des = root["temperature"];
-    const char* water = root["water_change"];
+    bool water_change_req = root["water_change_req"];
+    bool water_change_complete = root["water_change_complete"];
 
     // Keep heater within operating range
     if (sensors.getTempCByIndex(0) < temp_des){
@@ -226,6 +255,18 @@ void loop() {
     {
       digitalWrite(HEATER_CONTROL, LOW);
       delay(10);
+    }
+
+    // Feed the fish based on value from user (only turn if value not 0)
+    if (food != 0){
+      feedFish(food);
+      delay(10);
+    }
+
+    // Water change
+    if (water){
+      //Water Change Sequence
+      waterChange();
     }
 
     Serial.println(food);
