@@ -8,18 +8,18 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Link from "@mui/material/Link";
-import HomeIcon from "@mui/icons-material/Home";
+// import HomeIcon from "@mui/icons-material/Home";
 import RectangleOutlinedIcon from "@mui/icons-material/RectangleOutlined";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import SettingsIcon from "@mui/icons-material/Settings";
 import BuildIcon from "@mui/icons-material/Build";
 
 const items = [
-  {
-    value: "Home",
-    href: "/",
-    icon: <HomeIcon />,
-  },
+  // {
+  //   value: "Home",
+  //   href: "/",
+  //   icon: <HomeIcon />,
+  // },
   {
     value: "Your Tank",
     href: "/your-tank",

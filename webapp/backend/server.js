@@ -15,6 +15,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use("/api/sensors", require("./routes/sensorsRoutes"));
 app.use("/api/commands", require("./routes/commandsRoutes"));
 app.use("/api/feeder", require("./routes/feederRoutes"));
+app.use("/api/database", require("./routes/databaseRoutes"));
 
 scheduledFeeder.initializeFeeder();
 

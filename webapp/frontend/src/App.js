@@ -11,6 +11,10 @@ import { CssBaseline, GlobalStyles } from "@mui/material";
 import { useEffect, useState } from "react";
 import { resetFeeder, resetWaterChange } from "./utils/reset";
 import { Box } from "@mui/system";
+import FishInfo from "./pages/FishInfo";
+import FishDatabase from "./pages/FishDatabase";
+import BasicGuide from "./pages/BasicGuide";
+import FishFriend from "./pages/FishFriend";
 
 let theme = createTheme({
   palette: {
@@ -97,14 +101,19 @@ function App() {
                   />
                 }
               />
-              <Route path="/learn" element={<Learn />} />
+              <Route path="/learn" element={<Learn />}>
+                <Route path="basic-guide" element={<BasicGuide />} />
+                <Route path="database" element={<FishDatabase />}>
+                  <Route path=":fish" element={<FishInfo />} />
+                </Route>
+                <Route path="fish-friend" element={<FishFriend />} />
+              </Route>
               <Route path="/settings" element={<Settings />} />
               <Route path="/testing" element={<Testing />} />
             </Routes>
           </Box>
         </Router>
       </ThemeProvider>
-      {/* </Sidebar> */}
     </>
   );
 }
