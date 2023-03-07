@@ -40,7 +40,8 @@ const sendFeederCommand = async (rotations) => {
       body: JSON.stringify({
         temperature: commands.temperature,
         feeder: rotations,
-        water_change: commands.water_change,
+        water_change_req: commands.water_change_req,
+        water_change_complete: commands.water_change_complete,
       }),
     });
     response = await res.json();

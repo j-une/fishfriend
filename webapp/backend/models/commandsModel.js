@@ -10,9 +10,12 @@ const commandsSchema = mongoose.Schema({
     enum: [0, 1, 2, 3], // number of rotations, 0 is off
     required: true,
   },
-  water_change: {
-    type: String,
-    enum: ["start", "off"],
+  water_change_req: {
+    type: Boolean,
+    required: true,
+  },
+  water_change_complete: {
+    type: Boolean,
     required: true,
   },
 });

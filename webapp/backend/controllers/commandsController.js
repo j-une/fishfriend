@@ -23,7 +23,8 @@ const sendCommands = asyncHandler(async (req, res) => {
     commands = await Commands.create({
       temperature: req.body.temperature,
       feeder: req.body.feeder,
-      water_change: req.body.water_change,
+      water_change_req: req.body.water_change_req,
+      water_change_complete: req.body.water_change_complete,
     });
   }
   res.status(200).json(commands);

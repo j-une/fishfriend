@@ -12,16 +12,32 @@ import {
 import LoadingButton from "@mui/lab/LoadingButton";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import CloseIcon from "@mui/icons-material/Close";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+
+const usePreviousValue = (value) => {
+  const ref = useRef();
+  useEffect(() => {
+    ref.current = value;
+  });
+  return ref.current;
+};
 
 function WaterChangeAction(props) {
-  const { waterChangeState } = props.data;
+  const prevWaterChangeState = usePreviousValue(props.data.waterChangeState);
+  // const { waterChangeState } = props.data;
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [addWater, setAddWater] = useState(false);
 
   useEffect(() => {
-    if (waterChangeState === "normal") setLoading(false);
-  }, [waterChangeState]);
+    if (
+      prevWaterChangeState === "waste" &&
+      props.data.waterChangeState === "new"
+    ) {
+      setAddWater(true);
+      setLoading(false);
+    }
+  }, [props.data.waterChangeState]);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -33,6 +49,9 @@ function WaterChangeAction(props) {
   };
 
   const handleSubmit = async () => {
+    const command = addWater
+      ? { water_change_complete: true, water_change_req: false }
+      : { water_change_req: true };
     try {
       // Send new water change action
       const response = await fetch("/api/commands", {
@@ -40,16 +59,17 @@ function WaterChangeAction(props) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          water_change: "on",
-        }),
+        body: JSON.stringify(command),
       });
 
       if (!response.ok) {
         throw new Error(`Error! status: ${response.status}`);
       }
-
-      setLoading(true);
+      if (addWater) {
+        setAddWater(false);
+      } else {
+        setLoading(true);
+      }
     } catch (err) {
       console.log(err);
     }
@@ -86,7 +106,11 @@ function WaterChangeAction(props) {
             variant="contained"
             onClick={handleSubmit}
           >
-            Start
+            {addWater ? (
+              <div>Click when done adding water </div>
+            ) : (
+              <div>Start water change</div>
+            )}
           </LoadingButton>
         </DialogActions>
       </Dialog>

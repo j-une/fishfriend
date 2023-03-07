@@ -23,10 +23,6 @@ function TankStatus(props) {
               <Typography>pH Level</Typography>
               <Typography variant="h6">{sensorData.ph}</Typography>
             </Box>
-            <Box sx={{ textAlign: "center", p: 2 }}>
-              <Typography>Food Level</Typography>
-              <Typography variant="h6">{sensorData.food_level}%</Typography>
-            </Box>
           </Box>
         )}
       </CardContent>

@@ -10,10 +10,6 @@ const sensorsSchema = mongoose.Schema(
       type: Number,
       required: true,
     },
-    food_level: {
-      type: Number,
-      required: true,
-    },
     feeder: {
       type: String,
       enum: ["on", "off"],
@@ -21,7 +17,7 @@ const sensorsSchema = mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["normal", "waste"],
+      enum: ["normal", "waste", "new"],
       required: true,
     },
   },
