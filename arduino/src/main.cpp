@@ -58,6 +58,30 @@ Drive drive(IN1, IN2, IN3, IN4);
 int count = 0;
 int pos = 0;
 
+void turnPumpOn()
+{
+  analogWrite(IN3, LOW);
+  analogWrite(IN4, 1000);
+}
+
+void turnPumpOff()
+{
+  analogWrite(IN3, LOW);
+  analogWrite(IN4, LOW);
+}
+
+void turnFeederOn()
+{
+  analogWrite(IN2, 500);
+  analogWrite(IN1, LOW);
+}
+
+void turnFeederOff()
+{
+  analogWrite(IN2, LOW);
+  analogWrite(IN1, LOW);
+}
+
 float phMeasurement() {
   for(int i=0;i<10;i++)       //Get 10 sample value from the sensor for smooth the value
   { 
@@ -89,43 +113,40 @@ float phMeasurement() {
 void feedFish(int foodQuantity) {
   for(int i = 0; i < foodQuantity; i++){
 
-    analogWrite(IN2, 500);
-    analogWrite(IN1, LOW);
-
+    turnFeederOn();
     delay(3000);
 
-    drive.stopMoving();
-
   }
-  analogWrite(IN1, LOW);
+  turnFeederOff();
+
+  //Code to tell June water change is complete
 }
 
 void waterChange(){
   //Turn pump off
-  analogWrite(IN3, LOW);
-  analogWrite(IN4, LOW);
+  turnPumpOff();
   
   //Turn valve servo to waste output
-  for (pos = 0; pos <= 180; pos += 1) {
+  for (pos = 0; pos <= 90; pos += 1) {
     myservo.write(pos);          
     delay(50);                       
   }
 
   //Turn pump on to pump waste water
-  analogWrite(IN3, 500);
-  analogWrite(IN4, LOW);
-  delay(50000); //Enough time to clear the tank
+  turnPumpOn();
+  delay(5000); //Enough time to clear the tank
 
   //Turn pump off
-  analogWrite(IN3, LOW);
-  analogWrite(IN4, LOW);
+  turnPumpOff();
 
   //Turn valve servo to normal output
-  for (pos = 180; pos >= 0; pos -= 1) { 
+  for (pos = 90; pos >= 0; pos -= 1) { 
     myservo.write(pos);              
     delay(50);
   }
 }
+
+
 
 
 void printWifiStatus() {
@@ -160,7 +181,7 @@ void setup() {
 
   //Initialize //Serial and wait for port to open:
 
-  Serial.begin(9600);
+  //Serial.begin(9600);
   sensors.begin();
 
   /* Initialize HEATER_CONTROL*/
@@ -225,6 +246,7 @@ void loop() {
   while(client.connect(server, 2000)) {
     // Get temp sensor data
     sensors.requestTemperatures();
+    turnPumpOn();
 
 
     ////Serial.println("making POST request");
@@ -235,7 +257,7 @@ void loop() {
     String pHval = String(phMeasurement());
 
     // Make POST request with data we want to send
-    String postData = "temperature=" + tempData + "&ph=" + pHval + "&food_level=5&status=normal&feeder=off";
+    String postData = "temperature=" + tempData + "&ph=" + pHval + "&status=normal&feeder=off";
     httpClient.post("/api/sensors", contentType, postData);
     int statusCode = httpClient.responseStatusCode();
     String response = httpClient.responseBody();
@@ -253,14 +275,12 @@ void loop() {
       //Serial.println("parseObject() failed");
     }  
 
-    analogWrite(IN3, 1000);
-    analogWrite(IN4, LOW);
-
     //Store GET request data into variables 
     int food = root["feeder"];
     int temp_des = root["temperature"];
     bool water_change_req = root["water_change_req"];
     bool water_change_complete = root["water_change_complete"];
+    
 
     // Keep heater within operating range
     if (sensors.getTempCByIndex(0) < temp_des){
@@ -275,16 +295,55 @@ void loop() {
 
     // Feed the fish based on value from user (only turn if value not 0)
     if (food != 0){
-      Serial.println("Yog Sucks");
+      String postData = "feeder=on";
+      httpClient.post("/api/sensors", contentType, postData);
+      int statusCode = httpClient.responseStatusCode();
+      String response = httpClient.responseBody();
       feedFish(food);
-      Serial.println("Yog Blows");
+      
       delay(10);
+      String postData_feedOff = "feeder=off";
+      httpClient.post("/api/sensors", contentType, postData_feedOff);
+      int statusCode2 = httpClient.responseStatusCode();
+      String response2 = httpClient.responseBody();
     }
 
     // Water change
     if (water_change_req){
-      //Water Change Sequence
+      //-----Water Change Sequence-----
+      // Tell database waste waster is going to be pumped
+      String postData_waste = "status=waste";
+      httpClient.post("/api/sensors", contentType, postData_waste);
+      int statusCode2 = httpClient.responseStatusCode();
+      String response2 = httpClient.responseBody();
+
+      // Pump out waste water
       waterChange();
+
+      // Send post request asking for new water
+      String postData_new = "status=new";
+      httpClient.post("/api/sensors", contentType, postData_new);
+      int statusCode3 = httpClient.responseStatusCode();
+      String response3 = httpClient.responseBody();
+
+      // Continuously do GET requests until new water is poured in the tank
+      while(!water_change_complete) {
+        httpClient.get("/api/commands");
+        // Check if GET request suceeded
+        int statusCode_get2 = httpClient.responseStatusCode();
+        String response_get2 = httpClient.responseBody();
+        // Parse GET request
+        JsonObject& root = jsonBuffer.parseObject(response_get2);
+
+        // Check to see if GET request was parsed
+        if(!root.success()) {
+          //Serial.println("parseObject() failed");
+        } 
+        water_change_complete = root["water_change_complete"];
+
+      }
+      //turn pump back on
+      turnPumpOn();
     }
 
     // Clear jsonBuffer variable to prevent disconnection from client
