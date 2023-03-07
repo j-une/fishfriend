@@ -88,9 +88,14 @@ float phMeasurement() {
 
 void feedFish(int foodQuantity) {
   for(int i = 0; i < foodQuantity; i++){
-    analogWrite(IN1, 100);
-    analogWrite(IN2, LOW);
-    delay(100);
+
+    analogWrite(IN2, 500);
+    analogWrite(IN1, LOW);
+
+    delay(3000);
+
+    drive.stopMoving();
+
   }
   analogWrite(IN1, LOW);
 }
@@ -98,6 +103,7 @@ void feedFish(int foodQuantity) {
 void waterChange(){
   //Turn pump off
   analogWrite(IN3, LOW);
+  analogWrite(IN4, LOW);
   
   //Turn valve servo to waste output
   for (pos = 0; pos <= 180; pos += 1) {
@@ -107,10 +113,12 @@ void waterChange(){
 
   //Turn pump on to pump waste water
   analogWrite(IN3, 500);
+  analogWrite(IN4, LOW);
   delay(50000); //Enough time to clear the tank
 
   //Turn pump off
   analogWrite(IN3, LOW);
+  analogWrite(IN4, LOW);
 
   //Turn valve servo to normal output
   for (pos = 180; pos >= 0; pos -= 1) { 
@@ -124,33 +132,33 @@ void printWifiStatus() {
 
   // print the SSID of the network you're attached to:
 
-  Serial.print("SSID: ");
+  //Serial.print("SSID: ");
 
-  Serial.println(WiFi.SSID());
+  //Serial.println(WiFi.SSID());
 
   // print your board's IP address:
 
   IPAddress ip = WiFi.localIP();
 
-  Serial.print("IP Address: ");
+  //Serial.print("IP Address: ");
 
-  Serial.println(ip);
+  //Serial.println(ip);
 
   // print the received signal strength:
 
   long rssi = WiFi.RSSI();
 
-  Serial.print("signal strength (RSSI):");
+  //Serial.print("signal strength (RSSI):");
 
-  Serial.print(rssi);
+  //Serial.print(rssi);
 
-  Serial.println(" dBm");
+  //Serial.println(" dBm");
 }
 
 
 void setup() {
 
-  //Initialize serial and wait for port to open:
+  //Initialize //Serial and wait for port to open:
 
   Serial.begin(9600);
   sensors.begin();
@@ -165,10 +173,14 @@ void setup() {
 
   myservo.attach(VALVE_CONTROL);
 
+  //Initially turn off all motors
+  drive.stopMoving();
+  delay(100);
+
   // check for the WiFi module:
   if (WiFi.status() == WL_NO_MODULE) {
 
-    Serial.println("Communication with WiFi module failed!");
+    //Serial.println("Communication with WiFi module failed!");
 
     while (true);
 
@@ -178,7 +190,7 @@ void setup() {
 
   if (fv < WIFI_FIRMWARE_LATEST_VERSION) {
 
-    Serial.println("Please upgrade the firmware");
+    //Serial.println("Please upgrade the firmware");
 
   }
 
@@ -186,9 +198,9 @@ void setup() {
 
   while (status != WL_CONNECTED) {
 
-    Serial.print("Attempting to connect to SSID: ");
+    //Serial.print("Attempting to connect to SSID: ");
 
-    Serial.println(ssid);
+    //Serial.println(ssid);
 
     // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
 
@@ -200,7 +212,7 @@ void setup() {
 
   }
 
-  Serial.println("Connected to wifi");
+  //Serial.println("Connected to wifi");
 
   printWifiStatus();
 }
@@ -214,7 +226,8 @@ void loop() {
     // Get temp sensor data
     sensors.requestTemperatures();
 
-    Serial.println("making POST request");
+
+    ////Serial.println("making POST request");
     String contentType = "application/x-www-form-urlencoded";
 
     // Store sensor data in variables
@@ -237,10 +250,13 @@ void loop() {
 
     // Check to see if GET request was parsed
     if(!root.success()) {
-      Serial.println("parseObject() failed");
+      //Serial.println("parseObject() failed");
     }  
 
-    // Store GET request data into variables 
+    analogWrite(IN3, 1000);
+    analogWrite(IN4, LOW);
+
+    //Store GET request data into variables 
     int food = root["feeder"];
     int temp_des = root["temperature"];
     bool water_change_req = root["water_change_req"];
@@ -259,20 +275,17 @@ void loop() {
 
     // Feed the fish based on value from user (only turn if value not 0)
     if (food != 0){
+      Serial.println("Yog Sucks");
       feedFish(food);
+      Serial.println("Yog Blows");
       delay(10);
     }
 
     // Water change
-    if (water){
+    if (water_change_req){
       //Water Change Sequence
       waterChange();
     }
-
-    Serial.println(food);
-    Serial.println(water);
-    Serial.print("Temp: ");
-    Serial.println(String(temp_des));
 
     // Clear jsonBuffer variable to prevent disconnection from client
     jsonBuffer.clear();
