@@ -1,0 +1,7 @@
+bblanchon/ArduinoJson@5.13.4
+arduino-libraries/Servo@^1.1.8
+arduino-libraries/Ethernet@^2.0.1
+arduino-libraries/ArduinoHttpClient@^0.4.0
+paulstoffregen/OneWire@^2.3.7
+arduino-libraries/WiFiNINA@^1.8.13
+milesburton/DallasTemperature@^3.11.0
