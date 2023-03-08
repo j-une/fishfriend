@@ -127,7 +127,7 @@ void waterChange(){
   turnPumpOff();
   
   //Turn valve servo to waste output
-  for (pos = 0; pos <= 90; pos += 1) {
+  for (pos = 90; pos <= 160; pos += 1) {
     myservo.write(pos);          
     delay(50);                       
   }
@@ -140,7 +140,7 @@ void waterChange(){
   turnPumpOff();
 
   //Turn valve servo to normal output
-  for (pos = 90; pos >= 0; pos -= 1) { 
+  for (pos = 160; pos >= 90; pos -= 1) { 
     myservo.write(pos);              
     delay(50);
   }
@@ -190,7 +190,7 @@ void setup() {
   /* Initialize pH Sensor*/
 
   pinMode(HEATER_CONTROL, OUTPUT);
-  pinMode(FEED_CONTROL_N,OUTPUT);
+  // pinMode(FEED_CONTROL_N,OUTPUT);
 
   myservo.attach(VALVE_CONTROL);
 
