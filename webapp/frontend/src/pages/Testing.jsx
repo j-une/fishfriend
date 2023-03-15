@@ -1,161 +1,234 @@
+import {
+  Button,
+  Card,
+  CardContent,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { Box } from "@mui/system";
+import moment from "moment";
 import React, { useEffect, useState } from "react";
-// import { Button } from "@mui/material";
 
-// const handleClick = async () => {
-//   try {
-//     const response = await fetch("/api/hello", {
-//       method: "GET",
-//       headers: {
-//         Accept: "application/json",
-//       },
-//     });
+function Testing(props) {
+  const [comTemp, setComTemp] = useState();
+  const [comFeed, setComFeed] = useState();
+  const [comWatComplete, setComWatComplete] = useState();
+  const [comWatReq, setComWatReq] = useState();
 
-//     if (!response.ok) {
-//       throw new Error(`Error! status: ${response.status}`);
-//     }
+  const [senTemp, setSenTemp] = useState();
+  const [senPh, setSenPh] = useState();
+  const [senFeed, setSenFeed] = useState();
+  const [senStatus, setSendStatus] = useState();
+  console.log("props.sensorData", props.sensorData);
+  console.log("props.commandData", props.commandData);
 
-//     const result = await response.json();
-
-//     console.log("result is: ", JSON.stringify(result, null, 4));
-//   } catch (err) {
-//     console.log("error");
-//   }
-// };
-
-function Testing() {
-  const [sensorData, setSensorData] = useState();
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await fetch("/api/sensors");
-        const json = await res.json();
-        setSensorData(json);
-      } catch (error) {
-        console.log(error);
-      }
+  const handleCommandsPost = async () => {
+    const body = {
+      temperature: comTemp,
+      feeder: comFeed,
+      water_change_complete: comWatComplete === "true",
+      water_change_req: comWatReq === "true",
     };
+    try {
+      const response = await fetch("/api/commands", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      });
 
-    const id = setInterval(() => {
-      fetchData();
-    }, 3000);
+      if (!response.ok) {
+        throw new Error(`Error! status: ${response.status}`);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
-    fetchData();
+  const handleSensorsPost = async () => {
+    const body = {
+      temperature: senTemp,
+      ph: senPh,
+      feeder: senFeed,
+      status: senStatus,
+    };
+    try {
+      const response = await fetch("/api/sensors", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      });
 
-    return () => clearInterval(id);
-  }, []);
-
-  // const data = {
-  //   ph: "1",
-  //   temperature: "2",
-  //   food_level: "3",
-  //   feeder: "off",
-  //   status: "normal",
-  // };
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const res = await fetch("/api/sensors");
-  //       const json = await res.json();
-  //       setSensorData(json);
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   };
-  //   const postData = async () => {
-  //     try {
-  //       const res = await fetch("/api/sensors", {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify(data),
-  //       });
-  //       const json = await res.json();
-  //       console.log(json);
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   };
-
-  //   const id = setInterval(() => {
-  //     fetchData();
-  //     postData();
-  //   }, 1000);
-
-  //   postData();
-  //   fetchData();
-
-  //   return () => clearInterval(id);
-  // }, []);
+      if (!response.ok) {
+        throw new Error(`Error! status: ${response.status}`);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <>
-      <h1>testing</h1>
-      {sensorData && (
+      {props.sensorData && props.commandData && (
         <>
-          <p>pH: {sensorData.ph}</p>
-          <p>temperature: {sensorData.temperature}</p>
-          <p>food level: {sensorData.food_level}</p>
-          <br />
-          <h5>Send commands:</h5>
-          <iframe
-            name="dummyframe"
-            title="dummyframe"
-            id="dummyframe"
-            style={{ display: "none" }}
-          ></iframe>
-          <form
-            action="http://localhost:2000/api/commands"
-            method="POST"
-            target="dummyframe"
-          >
-            <label htmlFor="temperature">temperature: </label>
-            <input id="temperature" type="text" name="temperature" />
-            <br />
-            <label htmlFor="feeder">feeder: </label>
-            <input id="feeder" type="text" name="feeder" />
-            <br />
-            <label htmlFor="water_change">water change: </label>
-            <input id="water_change" type="text" name="water_change" />
-            <br />
-            <button>send</button>
-          </form>
-          <br />{" "}
+          <Typography variant="h5" gutterBottom>
+            Testing
+          </Typography>
+          <Box sx={{ display: "flex", columnGap: 2 }}>
+            <Card sx={{ flex: 1 }}>
+              <CardContent>
+                <Typography variant="h6">Sensor Data GET Request</Typography>
+                <Typography>
+                  <b>createdAt:</b>{" "}
+                  {moment
+                    .utc(props.sensorData[0].createdAt)
+                    .local()
+                    .format("YYYY-MMM-DD hh:mm:ss A")}
+                </Typography>
+                <Typography>
+                  <b>updatedAt:</b>{" "}
+                  {moment
+                    .utc(props.sensorData[0].updatedAt)
+                    .local()
+                    .format("YYYY-MMM-DD hh:mm:ss A")}
+                </Typography>
+                <Typography>
+                  <b>temperature:</b> {props.sensorData[0].temperature}
+                </Typography>
+                <Typography>
+                  <b>ph:</b> {props.sensorData[0].ph}
+                </Typography>
+                <Typography>
+                  <b>feeder:</b> {props.sensorData[0].feeder}
+                </Typography>
+                <Typography>
+                  <b>status:</b> {props.sensorData[0].status}
+                </Typography>
+              </CardContent>
+            </Card>
+            <Card sx={{ flex: 1 }}>
+              <CardContent>
+                <Typography variant="h6">Command Data GET Request</Typography>
+                <Typography>
+                  <b>temperature:</b> {props.commandData.temperature}
+                </Typography>
+                <Typography>
+                  <b>feeder:</b> {props.commandData.feeder}
+                </Typography>
+                <Typography>
+                  <b>water_change_complete:</b>{" "}
+                  {props.commandData.water_change_complete ? "true" : "false"}
+                </Typography>
+                <Typography>
+                  <b>water_change_req:</b>{" "}
+                  {props.commandData.water_change_req ? "true" : "false"}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Box>
+          <Box sx={{ display: "flex", columnGap: 2, mt: 2 }}>
+            <Card sx={{ flex: 1 }}>
+              <CardContent>
+                <Typography variant="h6">Sensor Data POST Request</Typography>
+                <Typography>
+                  <b>temperature:</b>{" "}
+                  <TextField
+                    value={senTemp}
+                    size="small"
+                    onChange={(event) => {
+                      setSenTemp(event.target.value);
+                    }}
+                  />
+                </Typography>
+                <Typography>
+                  <b>ph:</b>{" "}
+                  <TextField
+                    value={senPh}
+                    size="small"
+                    onChange={(event) => {
+                      setSenPh(event.target.value);
+                    }}
+                  />
+                </Typography>
+                <Typography>
+                  <b>feeder:</b>{" "}
+                  <TextField
+                    value={senFeed}
+                    size="small"
+                    onChange={(event) => {
+                      setSenFeed(event.target.value);
+                    }}
+                  />
+                </Typography>
+                <Typography>
+                  <b>status:</b>{" "}
+                  <TextField
+                    value={senStatus}
+                    size="small"
+                    onChange={(event) => {
+                      setSendStatus(event.target.value);
+                    }}
+                  />
+                </Typography>
+                <Button variant="outlined" onClick={handleSensorsPost}>
+                  Send
+                </Button>
+              </CardContent>
+            </Card>
+            <Card sx={{ flex: 1 }}>
+              <CardContent>
+                <Typography variant="h6">Command Data POST Request</Typography>
+                <Typography>
+                  <b>temperature:</b>{" "}
+                  <TextField
+                    value={comTemp}
+                    size="small"
+                    onChange={(event) => {
+                      setComTemp(event.target.value);
+                    }}
+                  />
+                </Typography>
+                <Typography>
+                  <b>feeder:</b>{" "}
+                  <TextField
+                    value={comFeed}
+                    size="small"
+                    onChange={(event) => {
+                      setComFeed(event.target.value);
+                    }}
+                  />
+                </Typography>
+                <Typography>
+                  <b>water_change_complete:</b>{" "}
+                  <TextField
+                    value={comWatComplete}
+                    size="small"
+                    onChange={(event) => {
+                      setComWatComplete(event.target.value);
+                    }}
+                  />
+                </Typography>
+                <Typography>
+                  <b>water_change_req:</b>{" "}
+                  <TextField
+                    value={comWatReq}
+                    size="small"
+                    onChange={(event) => {
+                      setComWatReq(event.target.value);
+                    }}
+                  />
+                </Typography>
+                <Button variant="outlined" onClick={handleCommandsPost}>
+                  Send
+                </Button>
+              </CardContent>
+            </Card>
+          </Box>
         </>
       )}
-      {/* <p>set led on/off</p>
-      <iframe
-        name="dummyframe"
-        id="dummyframe"
-        style={{ display: "none" }}
-      ></iframe>
-      <form
-        action="http://localhost:2000/api/hello"
-        method="GET"
-        target="dummyframe"
-      >
-        <button name="led" value="on">
-          Turn LED ON
-        </button>
-        <button name="led" value="off">
-          Turn LED OFF
-        </button>
-      </form>
-      <p>set temperature</p>
-      <form
-        action="http://localhost:2000/api/hello"
-        method="GET"
-        target="dummyframe"
-      >
-        <input id="temperature" type="text" name="temperature" />
-      </form>
-      <br />
-      <br />
-      <Button variant="contained" onClick={handleClick}>
-        GET
-      </Button> */}
     </>
   );
 }

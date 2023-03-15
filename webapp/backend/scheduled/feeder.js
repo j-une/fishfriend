@@ -6,7 +6,7 @@ let job;
 const initializeFeeder = () => {
   // TODO: update initial time interval based user input of fish, right now set for two a day
   job = schedule.scheduleJob("0 */12 * * *", function () {
-    sendFeederCommand();
+    sendFeederCommand(0);
   });
 };
 

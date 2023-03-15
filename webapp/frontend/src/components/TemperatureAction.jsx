@@ -71,8 +71,8 @@ function TemperatureAction(props) {
   };
   return (
     <>
-      <ListItem>
-        <ListItemButton onClick={handleClickOpen}>
+      <ListItem disablePadding>
+        <ListItemButton onClick={handleClickOpen} sx={{ p: 2 }}>
           <ListItemText primary="Water temperature" />
           <ArrowForwardIcon />
         </ListItemButton>

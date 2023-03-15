@@ -1,4 +1,6 @@
 import {
+  Breadcrumbs,
+  Link,
   Table,
   TableBody,
   TableCell,
@@ -7,22 +9,27 @@ import {
   Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 
-// TODO: fix route to fish info page
-function FishInfo(props) {
-  console.log("in fish info", props);
-  const [fishInfo, setFishInfo] = useState();
+function FishInfo(props, { route }) {
+  const { state } = useLocation();
+  const fishInfo = state;
+  const scientificName = state.fish[1];
+  const [fishBlurb, setFishBlurb] = useState("");
 
   const fetchFish = async (fishName) => {
     try {
       const wikiFishResponse = await fetch(
         "/api/database/wikiFish?" +
           new URLSearchParams({
-            fish: props.fish[1],
+            fish: fishName,
           })
       );
       const wikiFishJSON = await wikiFishResponse.json();
-      setFishInfo(wikiFishJSON);
+      setFishBlurb(
+        wikiFishJSON.query.pages[Object.keys(wikiFishJSON.query.pages)[0]]
+          .extract
+      );
       console.log(wikiFishJSON);
     } catch (error) {
       console.log(error);
@@ -30,46 +37,45 @@ function FishInfo(props) {
   };
 
   useEffect(() => {
-    fetchFish(props.fish);
-  });
+    fetchFish(scientificName);
+  }, []);
 
   return (
     <>
-      {props.fish && fishInfo && (
-        <>
-          <Typography variant="h4" gutterBottom>
-            {props.fish[0]} ({props.fish[1]})
-          </Typography>
-          <Typography gutterBottom>
-            {Object.values(props.blurb.query.pages)[0].extract}
-          </Typography>
-          <Typography gutterBottom>
-            {Object.values(props.blurb.query.pages)[0].extract}
-          </Typography>
-          <Table sx={{ minWidth: 650 }} style={{ tableLayout: "fixed" }}>
-            <TableHead>
-              <TableRow>
-                <TableCell align="center">Name</TableCell>
-                <TableCell align="center">Scientific Name</TableCell>
-                <TableCell align="center">Size</TableCell>
-                <TableCell align="center">Tank Size</TableCell>
-                <TableCell align="center">Temperature Range</TableCell>
-                <TableCell align="center">pH Range</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              <TableRow>
-                <TableCell align="center">{props.fish[0]}</TableCell>
-                <TableCell align="center">{props.fish[1]}</TableCell>
-                <TableCell align="center">{props.fish[3]}</TableCell>
-                <TableCell align="center">{props.fish[5]}</TableCell>
-                <TableCell align="center">{props.fish[6]}</TableCell>
-                <TableCell align="center">{props.fish[7]}</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </>
-      )}
+      <Breadcrumbs aria-label="breadcrumb">
+        <Link underline="hover" color="inherit" href="/learn/database">
+          Database
+        </Link>
+        <Typography color="text.primary">
+          {state.fish[0] || state.fish[1]}
+        </Typography>
+      </Breadcrumbs>
+      <Typography variant="h5" sx={{ mt: 4 }}>
+        {state.fish[0]}
+      </Typography>
+      {fishBlurb}
+      <Table sx={{ minWidth: 650 }} style={{ tableLayout: "fixed" }}>
+        <TableHead>
+          <TableRow>
+            <TableCell align="center">Name</TableCell>
+            <TableCell align="center">Scientific Name</TableCell>
+            <TableCell align="center">Size</TableCell>
+            <TableCell align="center">Tank Size</TableCell>
+            <TableCell align="center">Temperature Range</TableCell>
+            <TableCell align="center">pH Range</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          <TableRow>
+            <TableCell align="center">{fishInfo.fish[0]}</TableCell>
+            <TableCell align="center">{fishInfo.fish[1]}</TableCell>
+            <TableCell align="center">{fishInfo.fish[3]}</TableCell>
+            <TableCell align="center">{fishInfo.fish[5]}</TableCell>
+            <TableCell align="center">{fishInfo.fish[6]}</TableCell>
+            <TableCell align="center">{fishInfo.fish[7]}</TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
     </>
   );
 }

@@ -77,8 +77,8 @@ function WaterChangeAction(props) {
 
   return (
     <>
-      <ListItem>
-        <ListItemButton onClick={handleClickOpen}>
+      <ListItem disablePadding>
+        <ListItemButton onClick={handleClickOpen} sx={{ p: 2 }}>
           <ListItemText primary="Automatic water change" />
           <ArrowForwardIcon />
         </ListItemButton>

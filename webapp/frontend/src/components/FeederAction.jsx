@@ -62,8 +62,8 @@ function FeederAction() {
 
   return (
     <>
-      <ListItem>
-        <ListItemButton onClick={handleClickOpen}>
+      <ListItem disablePadding>
+        <ListItemButton onClick={handleClickOpen} sx={{ p: 2 }}>
           <ListItemText primary="Food intervals" />
           <ArrowForwardIcon />
         </ListItemButton>

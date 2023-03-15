@@ -103,13 +103,23 @@ function App() {
               />
               <Route path="/learn" element={<Learn />}>
                 <Route path="basic-guide" element={<BasicGuide />} />
-                <Route path="database" element={<FishDatabase />}>
+                <Route path="database">
+                  <Route index={true} element={<FishDatabase />} />
                   <Route path=":fish" element={<FishInfo />} />
                 </Route>
                 <Route path="fish-friend" element={<FishFriend />} />
               </Route>
               <Route path="/settings" element={<Settings />} />
-              <Route path="/testing" element={<Testing />} />
+              <Route
+                path="/testing"
+                element={
+                  <Testing
+                    sensorData={sensorData}
+                    commandData={commandData}
+                    waterChangeState={waterChangeState}
+                  />
+                }
+              />
             </Routes>
           </Box>
         </Router>

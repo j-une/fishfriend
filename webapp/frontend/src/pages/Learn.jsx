@@ -1,7 +1,7 @@
 import { Tab, Tabs, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { useState } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -24,8 +24,21 @@ function TabPanel(props) {
 // TODO: finish entire page
 function Learn() {
   const navigate = useNavigate();
-  const [value, setValue] = useState(0);
+  const location = useLocation();
+
   const paths = ["/learn", "basic-guide", "database", "fish-friend"];
+  const pathNames = [
+    "/learn",
+    "/learn/basic-guide",
+    "/learn/database",
+    "/learn/fish-friend",
+  ];
+
+  const [value, setValue] = useState(
+    pathNames.indexOf(location.pathname) !== -1
+      ? pathNames.indexOf(location.pathname)
+      : 2
+  );
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -47,7 +60,14 @@ function Learn() {
           </Tabs>
         </Box>
         <TabPanel>
-          {value === 0 && <Typography>Learn overview</Typography>}
+          {value === 0 && (
+            <Typography>
+              This is the learn section where you can find the basic guide to
+              pet fish care, a database of freshwater fish species that you can
+              search, and an overview of the Fish Friend product and how it
+              operates.
+            </Typography>
+          )}
           <Outlet />
         </TabPanel>
       </Box>

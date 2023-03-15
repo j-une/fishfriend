@@ -66,13 +66,12 @@ function Graphs(data) {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis
                   dataKey="createdAt"
-                  domain={["auto", "auto"]}
                   name="Time"
                   tickFormatter={(unixTime) =>
                     moment(unixTime).format("h:mm a")
                   }
                 />
-                <YAxis />
+                <YAxis domain={[15, "auto"]} />
                 <Tooltip
                   labelFormatter={(unixTime) =>
                     moment(unixTime).format("h:mm a")
