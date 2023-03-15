@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Dialog,
   DialogActions,
   DialogContent,
@@ -8,11 +9,13 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
+  Typography,
 } from "@mui/material";
-import LoadingButton from "@mui/lab/LoadingButton";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import CloseIcon from "@mui/icons-material/Close";
 import { useEffect, useRef, useState } from "react";
+import WaterChangeAnim from "./WaterChangeAnim";
+import WaterChangeStill from "./WaterChangeStill";
 
 const usePreviousValue = (value) => {
   const ref = useRef();
@@ -24,7 +27,6 @@ const usePreviousValue = (value) => {
 
 function WaterChangeAction(props) {
   const prevWaterChangeState = usePreviousValue(props.data.waterChangeState);
-  // const { waterChangeState } = props.data;
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [addWater, setAddWater] = useState(false);
@@ -99,19 +101,40 @@ function WaterChangeAction(props) {
           toxic for your fish. Perform regular water changes to prevent this.
         </DialogContent>
 
-        <DialogActions sx={{ justifyContent: "center", pb: 3 }}>
-          {/* TODO: edit loading button to nicer UI telling user water change is in progress/done */}
-          <LoadingButton
-            loading={loading}
-            variant="contained"
-            onClick={handleSubmit}
-          >
-            {addWater ? (
-              <div>Click when done adding water </div>
-            ) : (
-              <div>Start water change</div>
-            )}
-          </LoadingButton>
+        <DialogActions
+          sx={{
+            justifyContent: "center",
+            flexDirection: "column",
+            pb: 3,
+            zIndex: 1,
+          }}
+        >
+          {loading ? (
+            <>
+              <WaterChangeAnim />
+              <Typography lineHeight={2.5}>
+                Please wait while we remove water from your tank.
+              </Typography>
+            </>
+          ) : (
+            <>
+              {addWater ? (
+                <>
+                  <WaterChangeStill />
+                  <Button variant="contained" onClick={handleSubmit}>
+                    Click when done adding water
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <WaterChangeStill full />
+                  <Button variant="contained" onClick={handleSubmit}>
+                    Start water change
+                  </Button>
+                </>
+              )}
+            </>
+          )}
         </DialogActions>
       </Dialog>
     </>

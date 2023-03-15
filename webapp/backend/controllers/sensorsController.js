@@ -41,8 +41,52 @@ const getGraphSensorData = asyncHandler(async (req, res) => {
   res.status(200).json(sensor_data);
 });
 
+// Get last day sensor data entries, used to plot
+const getDayGraphSensorData = asyncHandler(async (req, res) => {
+  const lastDay = new Date();
+  lastDay.setHours(lastDay.getHours() - 24);
+
+  const sensor_data = await Sensor_Data.aggregate([
+    { $match: { temperature: { $ne: -127 }, createdAt: { $gte: lastDay } } },
+    { $sample: { size: 30 } },
+    { $sort: { createdAt: 1 } },
+  ]);
+  res.status(200).json(sensor_data);
+});
+
+// Get last week sensor data entries, used to plot
+const getWeekGraphSensorData = asyncHandler(async (req, res) => {
+  const lastWeek = new Date();
+  lastWeek.setDate(lastWeek.getDate() - 7);
+  lastWeek.setHours(0, 0, 0, 0);
+
+  const sensor_data = await Sensor_Data.aggregate([
+    { $match: { temperature: { $ne: -127 }, createdAt: { $gte: lastWeek } } },
+    { $sample: { size: 30 } },
+    { $sort: { createdAt: 1 } },
+  ]);
+  res.status(200).json(sensor_data);
+});
+
+// Get last month sensor data entries, used to plot
+const getMonthGraphSensorData = asyncHandler(async (req, res) => {
+  const lastMonth = new Date();
+  lastMonth.setDate(lastMonth.getDate() - 30);
+  lastMonth.setHours(0, 0, 0, 0);
+
+  const sensor_data = await Sensor_Data.aggregate([
+    { $match: { temperature: { $ne: -127 }, createdAt: { $gte: lastMonth } } },
+    { $sample: { size: 30 } },
+    { $sort: { createdAt: 1 } },
+  ]);
+  res.status(200).json(sensor_data);
+});
+
 module.exports = {
   getSensorData,
   sendSensorData,
   getGraphSensorData,
+  getDayGraphSensorData,
+  getWeekGraphSensorData,
+  getMonthGraphSensorData,
 };

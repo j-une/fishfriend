@@ -1,0 +1,44 @@
+.tank {
+  width: 254px;
+  height: 176px;
+  position: relative;
+  background-image: url("../../public/tank.png");
+  background-size: cover;
+  background-position: center;
+}
+.tank::before {
+  position: absolute;
+  content: "";
+  height: 45px;
+  width: 147px;
+  bottom: 25px;
+  left: 13px;
+  background-color: #b1d0f4;
+  z-index: -1;
+  animation: water 5s infinite;
+  animation-fill-mode: forwards;
+}
+@keyframes water {
+  from {
+    height: 90px;
+  }
+  to {
+    height: 65px;
+  }
+}
+.tankFull {
+  width: 254px;
+  height: 176px;
+  position: relative;
+  background-image: url("../../public/tank_full.png");
+  background-size: cover;
+  background-position: center;
+}
+.tankEmpty {
+  width: 254px;
+  height: 176px;
+  position: relative;
+  background-image: url("../../public/tank_empty.png");
+  background-size: cover;
+  background-position: center;
+}
