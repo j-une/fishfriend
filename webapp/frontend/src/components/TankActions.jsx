@@ -12,7 +12,7 @@ import FeederAction from "./FeederAction";
 
 function TankActions(props) {
   return (
-    <Card sx={{ mt: 2, flexGrow: 2 }}>
+    <Card sx={{ mt: 3, flexGrow: 2 }}>
       <CardContent sx={{ p: 3 }}>
         <Typography variant="h6">Tank actions:</Typography>
         <Box>

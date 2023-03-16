@@ -30,6 +30,7 @@ function WaterChangeAction(props) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [addWater, setAddWater] = useState(false);
+  const [complete, setComplete] = useState(false);
 
   useEffect(() => {
     if (
@@ -43,11 +44,11 @@ function WaterChangeAction(props) {
 
   const handleClickOpen = () => {
     setOpen(true);
+    setComplete(false);
   };
 
   const handleClose = () => {
     setOpen(false);
-    setLoading(false);
   };
 
   const handleSubmit = async () => {
@@ -69,6 +70,7 @@ function WaterChangeAction(props) {
       }
       if (addWater) {
         setAddWater(false);
+        setComplete(true);
       } else {
         setLoading(true);
       }
@@ -96,9 +98,12 @@ function WaterChangeAction(props) {
             </Box>
           </Box>
         </DialogTitle>
-        <DialogContent>
-          When the nitrate levels in the water become too high, it can become
-          toxic for your fish. Perform regular water changes to prevent this.
+        <DialogContent sx={{ paddingBottom: 0 }}>
+          {addWater
+            ? "Please add clean tap water into your tank to refill it to its normal water level."
+            : complete
+            ? "Thank you for completing a water change to keep your fish healthy!"
+            : "When the nitrate levels in the water become too high, it can become toxic for your fish. Perform regular water changes to prevent this."}
         </DialogContent>
 
         <DialogActions
@@ -127,10 +132,21 @@ function WaterChangeAction(props) {
                 </>
               ) : (
                 <>
-                  <WaterChangeStill full />
-                  <Button variant="contained" onClick={handleSubmit}>
-                    Start water change
-                  </Button>
+                  {complete ? (
+                    <>
+                      <WaterChangeStill full />
+                      <Typography lineHeight={2.5}>
+                        Water change complete! You may now close this window.
+                      </Typography>
+                    </>
+                  ) : (
+                    <>
+                      <WaterChangeStill full />
+                      <Button variant="contained" onClick={handleSubmit}>
+                        Start water change
+                      </Button>
+                    </>
+                  )}
                 </>
               )}
             </>

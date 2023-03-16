@@ -14,7 +14,7 @@ import {
 // TODO: functionality of this feature
 function YourFish() {
   return (
-    <Card sx={{ mt: 2, flexGrow: 2 }}>
+    <Card sx={{ mt: 3, flexGrow: 2 }}>
       <CardContent sx={{ p: 3 }}>
         <Typography variant="h6">Your fish:</Typography>
         <Box sx={{ p: "20px 0px" }}>

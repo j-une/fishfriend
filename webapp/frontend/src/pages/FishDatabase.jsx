@@ -13,7 +13,6 @@ import SearchBar from "../components/SearchBar";
 
 function FishDatabase() {
   const navigate = useNavigate();
-  const [tableData, setTableData] = useState();
   const [wikiData, setWikiData] = useState();
   const [categorizedFish, setCategorizedFish] = useState();
 
@@ -62,7 +61,6 @@ function FishDatabase() {
         tableResponse.json(),
         wikiResponse.json(),
       ]);
-      setTableData(tableJSON);
       setWikiData(wikiJSON);
       setCategorizedFish(categorizeFish(tableJSON));
     } catch (error) {
@@ -72,13 +70,12 @@ function FishDatabase() {
 
   useEffect(() => {
     fetchData();
-    // setFish();
   }, []);
 
   return (
     <Box sx={{ textAlign: "center", mt: 4 }}>
       <>
-        {wikiData && categorizedFish && (
+        {wikiData && categorizedFish ? (
           <>
             <Typography variant="h4">
               Explore our database of freshwater fish species
@@ -87,7 +84,7 @@ function FishDatabase() {
               Whether you're looking for information about the fish you
               currently have or for a new fish to adopt, you can find it here.
             </Typography>
-            <SearchBar />
+            <SearchBar fish={categorizedFish.flat()} />
             <Typography variant="h6" textAlign="left" sx={{ mt: 4, mb: 1 }}>
               Browse by category
             </Typography>
@@ -141,6 +138,10 @@ function FishDatabase() {
               </Accordion>
             ))}
           </>
+        ) : (
+          <Box sx={{ height: 20, p: 30 }}>
+            <Typography variant="h5">Loading...</Typography>
+          </Box>
         )}
       </>
     </Box>

@@ -37,7 +37,7 @@ function FishInfo(props, { route }) {
   };
 
   useEffect(() => {
-    fetchFish(scientificName);
+    fetchFish(state.fish[0] || scientificName);
   }, []);
 
   return (
@@ -54,7 +54,7 @@ function FishInfo(props, { route }) {
         {state.fish[0]}
       </Typography>
       {fishBlurb}
-      <Table sx={{ minWidth: 650 }} style={{ tableLayout: "fixed" }}>
+      <Table sx={{ minWidth: 650, mt: 5 }} style={{ tableLayout: "fixed" }}>
         <TableHead>
           <TableRow>
             <TableCell align="center">Name</TableCell>
@@ -67,12 +67,12 @@ function FishInfo(props, { route }) {
         </TableHead>
         <TableBody>
           <TableRow>
-            <TableCell align="center">{fishInfo.fish[0]}</TableCell>
-            <TableCell align="center">{fishInfo.fish[1]}</TableCell>
-            <TableCell align="center">{fishInfo.fish[3]}</TableCell>
-            <TableCell align="center">{fishInfo.fish[5]}</TableCell>
-            <TableCell align="center">{fishInfo.fish[6]}</TableCell>
-            <TableCell align="center">{fishInfo.fish[7]}</TableCell>
+            <TableCell align="center">{fishInfo.fish[0] || "N/A"}</TableCell>
+            <TableCell align="center">{fishInfo.fish[1] || "N/A"}</TableCell>
+            <TableCell align="center">{fishInfo.fish[3] || "N/A"}</TableCell>
+            <TableCell align="center">{fishInfo.fish[5] || "N/A"}</TableCell>
+            <TableCell align="center">{fishInfo.fish[6] || "N/A"}</TableCell>
+            <TableCell align="center">{fishInfo.fish[7] || "N/A"}</TableCell>
           </TableRow>
         </TableBody>
       </Table>

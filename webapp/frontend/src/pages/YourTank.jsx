@@ -13,8 +13,14 @@ function YourTank(props) {
           <Typography variant="h5" gutterBottom>
             Your Tank
           </Typography>
+          {/* {error && (
+            <Alert severity="error" sx={{ mb: 2 }} onClose={() => {}}>
+              <strong>Error:</strong> Stopped receiving data from Fish Friend,
+              try restarting.
+            </Alert>
+          )} */}
           <TankStatus data={props.sensorData[0]} />
-          <Box sx={{ display: "flex", columnGap: 2 }}>
+          <Box sx={{ display: "flex", columnGap: 4 }}>
             <TankActions
               data={props.commandData}
               waterChangeState={props.waterChangeState}

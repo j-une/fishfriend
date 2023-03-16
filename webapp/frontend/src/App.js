@@ -85,7 +85,7 @@ function App() {
             component="main"
             sx={{
               flexGrow: 1,
-              p: 3,
+              p: "28px 56px",
               marginLeft: "240px",
             }}
           >

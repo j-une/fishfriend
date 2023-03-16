@@ -91,7 +91,7 @@ function Graphs(data) {
   }, []);
 
   return (
-    <Card sx={{ mt: 2 }}>
+    <Card sx={{ mt: 3 }}>
       <CardContent sx={{ p: 3 }}>
         <Box sx={{ display: "flex" }}>
           <Typography variant="h6" sx={{ flex: 6 }}>
@@ -133,10 +133,10 @@ function Graphs(data) {
                     domain={["auto", "auto"]}
                     name="Time"
                     tickFormatter={(unixTime) => {
-                      let format = "h:mm a";
+                      let format = "h:mm:ss a";
                       switch (range) {
                         case "day":
-                          format = "h a";
+                          format = "h:mm a";
                           break;
                         case "week":
                           format = "ddd";
@@ -145,7 +145,7 @@ function Graphs(data) {
                           format = "MMM-DD";
                           break;
                         default:
-                          format = "h:mm a";
+                          format = "h:mm:ss a";
                       }
                       return moment(unixTime).format(format);
                     }}
@@ -179,10 +179,10 @@ function Graphs(data) {
                     dataKey="createdAt"
                     name="Time"
                     tickFormatter={(unixTime) => {
-                      let format = "h:mm a";
+                      let format = "h:mm:ss a";
                       switch (range) {
                         case "day":
-                          format = "h a";
+                          format = "h:mm a";
                           break;
                         case "week":
                           format = "ddd";
@@ -191,7 +191,7 @@ function Graphs(data) {
                           format = "MMM-DD";
                           break;
                         default:
-                          format = "h:mm a";
+                          format = "h:mm:ss a";
                       }
                       return "   " + moment(unixTime).format(format) + "   ";
                     }}

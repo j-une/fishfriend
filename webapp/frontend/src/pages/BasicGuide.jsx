@@ -1,13 +1,16 @@
-import { Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 
 // TODO: entire page
 function BasicGuide() {
   return (
-    <>
-      <Typography variant="h5" gutterBottom>
-        Basic Guide
-      </Typography>
-    </>
+    <Box sx={{ display: "flex" }}>
+      <Box sx={{ flex: 3 }}>
+        <Typography variant="h5" gutterBottom>
+          Basic Guide
+        </Typography>
+      </Box>
+      <Box sx={{ flex: 1, pl: 4 }}></Box>
+    </Box>
   );
 }
 

@@ -74,7 +74,7 @@ export default function Sidebar({ children }) {
             >
               <ListItemButton
                 sx={{ color: "#0000008a" }}
-                selected={item.href === window.location.pathname}
+                selected={window.location.pathname.includes(item.href)}
               >
                 <ListItemIcon>{item.icon}</ListItemIcon>
                 <ListItemText primary={item.value} />

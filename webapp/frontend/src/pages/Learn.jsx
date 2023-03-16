@@ -61,12 +61,20 @@ function Learn() {
         </Box>
         <TabPanel>
           {value === 0 && (
-            <Typography>
-              This is the learn section where you can find the basic guide to
-              pet fish care, a database of freshwater fish species that you can
-              search, and an overview of the Fish Friend product and how it
-              operates.
-            </Typography>
+            <Box sx={{ display: "flex" }}>
+              <Box sx={{ flex: 3 }}>
+                <Typography variant="h5" gutterBottom>
+                  Overview
+                </Typography>
+                <Typography>
+                  This is the learn section where you can find the basic guide
+                  to pet fish care, a database of freshwater fish species that
+                  you can search, and an overview of the Fish Friend product and
+                  how it operates. Click the tabs above to navigate.
+                </Typography>
+              </Box>
+              <Box sx={{ flex: 1, pl: 4 }}></Box>
+            </Box>
           )}
           <Outlet />
         </TabPanel>
