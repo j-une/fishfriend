@@ -19,14 +19,17 @@ import FishFriend from "./pages/FishFriend";
 let theme = createTheme({
   palette: {
     primary: {
-      main: "#0052cc",
+      main: "#3c94de",
     },
     secondary: {
-      main: "#c951bf",
+      main: "#6d8aa8",
     },
     background: {
       default: "#222222",
     },
+  },
+  typography: {
+    fontFamily: ["Noto Sans"].join(","),
   },
 });
 

@@ -91,7 +91,7 @@ function Graphs(data) {
   }, []);
 
   return (
-    <Card sx={{ mt: 3 }}>
+    <Card sx={{ mt: 3, borderRadius: 2 }}>
       <CardContent sx={{ p: 3 }}>
         <Box sx={{ display: "flex" }}>
           <Typography variant="h6" sx={{ flex: 6 }}>

@@ -30,7 +30,6 @@ function FishInfo(props, { route }) {
         wikiFishJSON.query.pages[Object.keys(wikiFishJSON.query.pages)[0]]
           .extract
       );
-      console.log(wikiFishJSON);
     } catch (error) {
       console.log(error);
     }
@@ -50,7 +49,7 @@ function FishInfo(props, { route }) {
           {state.fish[0] || state.fish[1]}
         </Typography>
       </Breadcrumbs>
-      <Typography variant="h5" sx={{ mt: 4 }}>
+      <Typography variant="h4" sx={{ mt: 4 }} gutterBottom>
         {state.fish[0]}
       </Typography>
       {fishBlurb}

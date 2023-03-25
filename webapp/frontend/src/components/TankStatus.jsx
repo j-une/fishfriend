@@ -6,7 +6,7 @@ import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 function TankStatus(props) {
   const sensorData = props.data;
   return (
-    <Card>
+    <Card sx={{ borderRadius: 2 }}>
       <CardContent sx={{ p: 3 }}>
         {/* TANK STATUS */}
         <Typography variant="h6">Current tank status:</Typography>
@@ -15,9 +15,10 @@ function TankStatus(props) {
             sx={{
               display: "flex",
               justifyContent: "space-evenly",
+              margin: "0px 70px",
             }}
           >
-            <Box sx={{ textAlign: "center", p: "15px 130px" }}>
+            <Box sx={{ textAlign: "center", p: "15px 100px" }}>
               <Typography fontWeight={400} variant="h6">
                 Temperature
               </Typography>
@@ -33,7 +34,7 @@ function TankStatus(props) {
                 Your tank needs a temperature range between 17-24° C.
               </Typography>
             </Box>
-            <Box sx={{ textAlign: "center", p: "15px 130px" }}>
+            <Box sx={{ textAlign: "center", p: "15px 100px" }}>
               <Typography fontWeight={400} variant="h6">
                 pH Level
               </Typography>
@@ -49,7 +50,7 @@ function TankStatus(props) {
                 Your tank water needs a pH levek range between 6.5-7.5.
               </Typography>
             </Box>
-            <Box sx={{ textAlign: "center", p: "15px 130px" }}>
+            <Box sx={{ textAlign: "center", p: "15px 100px" }}>
               <Typography fontWeight={400} variant="h6">
                 Food Level
               </Typography>
@@ -59,10 +60,10 @@ function TankStatus(props) {
                 sx={{ verticalAlign: "middle", mb: 2, mr: 1 }}
               />
               <Typography variant="h4" display="inline-block">
-                36%
+                0%
               </Typography>
               <Typography lineHeight={1}>
-                Your fish need 10mg of food per day, make sure the feeder is not
+                Your fish need 10mg of food per day; make sure the feeder is not
                 empty.
               </Typography>
             </Box>

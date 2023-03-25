@@ -84,7 +84,7 @@ function FeederAction() {
           Your fish need 10mg of food per day, make sure the feeder is not
           empty.
         </DialogContent>
-        <Box sx={{ display: "flex", justifyContent: "space-evenly" }}>
+        <Box sx={{ display: "flex", justifyContent: "space-evenly", mb: 3 }}>
           <NumberStepper
             title="Times per day"
             value={setTimesPerDay}

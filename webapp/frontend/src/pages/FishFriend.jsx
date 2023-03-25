@@ -1,7 +1,6 @@
 import { Card, CardContent, Link, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 
-// TODO: entire page
 function FishFriend() {
   return (
     <Box sx={{ display: "flex" }}>
@@ -13,6 +12,16 @@ function FishFriend() {
           Here you can find all the details on Fish Friend, your all-in-one
           smart fish tank system.
         </Typography>
+        <Box
+          component="img"
+          sx={{
+            height: 300,
+            display: "block",
+            m: "0px auto",
+          }}
+          alt="The house from the offer."
+          src={require("../fishfriend.png")}
+        />
         <Typography id="sensors" variant="h5" sx={{ mt: 3, mb: 0.5 }}>
           Sensors
         </Typography>

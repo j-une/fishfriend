@@ -13,10 +13,8 @@ function SearchBar(props) {
 
   const handleInput = (e) => {
     if (e.target.value) {
-      console.log(e.target.value);
       let row = props.fish.findIndex((elem) => elem.includes(e.target.value));
       if (row !== -1) {
-        console.log(props.fish[row][1]);
         navigate(props.fish[row][1], {
           state: { fish: props.fish[row] },
         });

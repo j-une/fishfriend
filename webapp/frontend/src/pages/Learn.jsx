@@ -63,7 +63,7 @@ function Learn() {
           {value === 0 && (
             <Box sx={{ display: "flex" }}>
               <Box sx={{ flex: 3 }}>
-                <Typography variant="h5" gutterBottom>
+                <Typography variant="h4" gutterBottom>
                   Overview
                 </Typography>
                 <Typography>

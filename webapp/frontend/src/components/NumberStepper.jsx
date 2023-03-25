@@ -26,7 +26,7 @@ function NumberStepper(props) {
             padding: 1,
             border: "1px solid rgba(0, 82, 204, 0.5)",
             borderRightColor: "transparent",
-            color: "#0052cc",
+            color: "#3c94de",
           }}
         >
           {value}
